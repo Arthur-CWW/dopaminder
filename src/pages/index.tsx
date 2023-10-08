@@ -22,29 +22,37 @@ function WebsiteSection() {
           e.preventDefault();
           console.log(url);
 
-          if (url && !websites.find((website) => website.url === url)) {
-            console.log("adding website", url);
+          if (
+            url &&
+            !websites.find(
+              (website) => website.url === url || website.name === url,
+            )
+          ) {
             // basename is the domain name
+            const urlWithDefaultScheme = url.match(
+              /^(https?|ftp):\/\/|^ftps?:\/\/|^www\./i,
+            )
+              ? url
+              : `https://${url}`;
+
             try {
-              new URL(url);
-            } catch (e) {
-              console.log(e);
-              return;
+              const urlObject = new URL(urlWithDefaultScheme);
+              const name = urlObject.hostname;
+              console.log("adding website", name);
+              console.log(urlObject);
+              setWebsites([
+                ...websites,
+                {
+                  url: urlWithDefaultScheme,
+                  name,
+                  favicon: `https://www.google.com/s2/favicons?domain=${urlObject.hostname}`,
+                },
+              ]);
+            } catch (error) {
+              console.error("Error parsing URL:", error);
             }
-            const name = new URL(url).hostname;
-
-            console.log(name);
-            setWebsites([
-              ...websites,
-              {
-                url,
-                name,
-                favicon: `https://www.google.com/s2/favicons?domain=${url}`,
-              },
-            ]);
-
-            setURL("");
           }
+          setURL("");
         }}
       >
         <input
@@ -64,7 +72,7 @@ function WebsiteSection() {
         <header>Website</header>
         {websites?.map((website) => (
           <li
-            key={website.url}
+            key={website.name}
             className="flex items-center justify-between gap-1"
           >
             <div className="flex items-center gap-2">
