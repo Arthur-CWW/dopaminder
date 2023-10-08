@@ -1,12 +1,93 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
+import { RiDeleteBin5Line } from "react-icons/ri";
 import Link from "next/link";
+import MultiSelect from "~/components/MultiSelect";
+import { useState } from "react";
 
 import { api } from "~/utils/api";
 
+function WebsiteSection() {
+  const [url, setURL] = useState("");
+  const [websites, setWebsites] = useState<
+    { url: string; name: string; favicon: string }[]
+  >([]);
+
+  return (
+    <div>
+      <form
+        noValidate
+        className=""
+        onSubmit={(e) => {
+          e.preventDefault();
+          console.log(url);
+
+          if (url && !websites.find((website) => website.url === url)) {
+            console.log("adding website", url);
+            // basename is the domain name
+            const name = url;
+
+            console.log(name);
+            setWebsites([
+              ...websites,
+              {
+                url,
+                name,
+                favicon: `https://www.google.com/s2/favicons?domain=${url}`,
+              },
+            ]);
+
+            setURL("");
+          }
+        }}
+      >
+        <input
+          className="form-control"
+          type="text"
+          placeholder="Example: instagram.com"
+          value={url}
+          required
+          onChange={(e) => setURL(e.currentTarget.value)}
+        />
+        <button className="btn btn-primary px-5" type="submit">
+          Add
+        </button>
+      </form>
+      {/* table head */}
+      <ul className="max-w-xl">
+        <header>Website</header>
+        {websites?.map((website) => (
+          <li
+            key={website.url}
+            className="flex items-center justify-between gap-1"
+          >
+            <div className="flex items-center gap-2">
+              {website.favicon && (
+                <img src={website.favicon} alt={website.name} />
+              )}
+              <span className="text-lg">{website.name}</span>
+            </div>
+            <button
+              className="btn btn-primary px-5"
+              onClick={() => {
+                setWebsites(
+                  websites.filter((website) => website.url !== website.url),
+                );
+              }}
+            >
+              {/* light gray stroke */}
+              <RiDeleteBin5Line className="fill-current text-gray-600" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Home() {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
+  // const test_websites
   return (
     <>
       <Head>
@@ -19,18 +100,8 @@ export default function Home() {
         <main className="overflow-auto p-5">
           <h4 className="">Sites</h4>
           <h5 className="mb-3">Distracting Sites</h5>
-          <form noValidate className="">
-            <input
-              className="form-control"
-              type="text"
-              placeholder="Example: instagram.com"
-              required
-              value=""
-            />
-            <button className="btn btn-primary px-5" type="submit">
-              Add
-            </button>
-          </form>
+          {/* <MultiSelect options={[] as Option[]} /> */}
+          <WebsiteSection />
         </main>
       </div>
     </>
@@ -53,7 +124,7 @@ function Sidebar() {
     },
   ];
   return (
-    <aside className="bg-light flex h-screen w-full flex-col justify-between p-5">
+    <aside className="flex h-screen w-full flex-col justify-between bg-light p-5">
       <nav className=" flex flex-col text-start">
         <div className="flex items-center gap-2 pb-2 text-start text-lg font-semibold">
           <img src="/dopamine.jpg" alt="logo" width="" className="w-10" />
@@ -101,7 +172,7 @@ function AuthShowcase() {
 
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined }
+    { enabled: sessionData?.user !== undefined },
   );
 
   return (
