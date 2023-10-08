@@ -21,36 +21,39 @@ function WebsiteSection() {
         onSubmit={(e) => {
           e.preventDefault();
           console.log(url);
+          if (!url) return;
 
+          const defaultUrlRegex = url.match(
+            /^(https?|ftp):\/\/|^ftps?:\/\/|^www\./i,
+          )
+            ? url
+            : `https://${url}`;
+
+          let name: string;
+          try {
+            const urlObject = new URL(defaultUrlRegex);
+            name = urlObject.hostname;
+
+            console.log(urlObject);
+          } catch (error) {
+            console.error("Error parsing URL:", error);
+            return;
+          }
           if (
-            url &&
             !websites.find(
-              (website) => website.url === url || website.name === url,
+              (website) => website.url === name || website.name === name,
             )
           ) {
             // basename is the domain name
-            const urlWithDefaultScheme = url.match(
-              /^(https?|ftp):\/\/|^ftps?:\/\/|^www\./i,
-            )
-              ? url
-              : `https://${url}`;
-
-            try {
-              const urlObject = new URL(urlWithDefaultScheme);
-              const name = urlObject.hostname;
-              console.log("adding website", name);
-              console.log(urlObject);
-              setWebsites([
-                ...websites,
-                {
-                  url: urlWithDefaultScheme,
-                  name,
-                  favicon: `https://www.google.com/s2/favicons?domain=${urlObject.hostname}`,
-                },
-              ]);
-            } catch (error) {
-              console.error("Error parsing URL:", error);
-            }
+            console.log("adding website", name);
+            setWebsites([
+              ...websites,
+              {
+                url: defaultUrlRegex,
+                name,
+                favicon: `https://www.google.com/s2/favicons?domain=${name}`,
+              },
+            ]);
           }
           setURL("");
         }}
