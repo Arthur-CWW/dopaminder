@@ -25,7 +25,13 @@ function WebsiteSection() {
           if (url && !websites.find((website) => website.url === url)) {
             console.log("adding website", url);
             // basename is the domain name
-            const name = url;
+            try {
+              new URL(url);
+            } catch (e) {
+              console.log(e);
+              return;
+            }
+            const name = new URL(url).hostname;
 
             console.log(name);
             setWebsites([
