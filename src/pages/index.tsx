@@ -10,6 +10,7 @@ import { BiStats, BiLockAlt } from "react-icons/bi";
 import { api } from "~/utils/api";
 import { AiFillCalendar } from "react-icons/ai";
 import { CgWebsite } from "react-icons/cg";
+import { getUrl } from "~/utils/validator";
 function WebsiteSection() {
   const [url, setURL] = useState("");
   const [websites, setWebsites] = useState<
@@ -23,36 +24,18 @@ function WebsiteSection() {
         className=""
         onSubmit={(e) => {
           e.preventDefault();
-          console.log(url);
           if (!url) return;
+          const { Url, defaultUrl } = getUrl(url);
 
-          const defaultUrlRegex = url.match(
-            /^(https?|ftp):\/\/|^ftps?:\/\/|^www\./i,
-          )
-            ? url
-            : `https://${url}`;
-
-          let name: string;
-          try {
-            const urlObject = new URL(defaultUrlRegex);
-            name = urlObject.hostname;
-
-            console.log(urlObject);
-          } catch (error) {
-            console.error("Error parsing URL:", error);
-            return;
-          }
-          if (
-            !websites.find(
-              (website) => website.url === name || website.name === name,
-            )
-          ) {
+          if (!Url) return;
+          const name = Url.hostname;
+          if (!websites.find((website) => website.name === name)) {
             // basename is the domain name
             console.log("adding website", name);
             setWebsites([
               ...websites,
               {
-                url: defaultUrlRegex,
+                url: defaultUrl,
                 name,
                 favicon: `https://www.google.com/s2/favicons?domain=${name}`,
               },
