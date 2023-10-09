@@ -5,8 +5,11 @@ import Link from "next/link";
 import MultiSelect from "~/components/MultiSelect";
 import { useState } from "react";
 
+import { FiTarget } from "react-icons/fi";
+import { BiStats, BiLockAlt } from "react-icons/bi";
 import { api } from "~/utils/api";
-
+import { AiFillCalendar } from "react-icons/ai";
+import { CgWebsite } from "react-icons/cg";
 function WebsiteSection() {
   const [url, setURL] = useState("");
   const [websites, setWebsites] = useState<
@@ -147,26 +150,31 @@ function Sidebar() {
           <img src="/dopamine.jpg" alt="logo" width="" className="w-10" />
           <h5 className="">Intention</h5>
         </div>
-        <Link className=" active" href="/">
+        <Link className=" active flex items-center gap-1" href="/">
+          <CgWebsite className="text-slate-600" />
           Sites
         </Link>
         {/* <span className="after:w-2 after:content-[⏰]">
           TODO Fix pseudo elements
           </span> */}
-        <Link className="after:w-2 after:content-[⏰]" href="/schedule">
+        <Link className="flex items-center gap-1" href="/schedule">
+          <AiFillCalendar className="text-slate-600" />
           Schedule
         </Link>
-        <Link className="" href="/goals">
-          🎯 Goals
+        <Link className="flex items-center gap-1" href="/goals">
+          <FiTarget className="text-slate-600" /> Goals
         </Link>
-        <Link className="" href="/stats">
-          📊 Stats
+        <Link className="flex items-center gap-1" href="/stats">
+          <BiStats className="text-slate-600" /> Stats
         </Link>
-        <Link className="" href="/privacy">
-          🔒 Privacy
+        <Link
+          className="flex items-center gap-1 align-baseline"
+          href="/privacy"
+        >
+          <BiLockAlt className="text-slate-600" /> Privacy
         </Link>
       </nav>
-      <ul className="align-left text-sm">
+      <ul className="text-start text-sm font-light text-gray-400">
         {feedbackLinks.map((link) => (
           <li key={link.href}>
             <a
