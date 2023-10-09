@@ -89,7 +89,7 @@ function WebsiteSection() {
 }
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const hello = api.websites.hello.useQuery({ text: "from tRPC" });
   // const test_websites
   return (
     <>
@@ -178,7 +178,7 @@ function Sidebar() {
 function AuthShowcase() {
   const { data: sessionData } = useSession();
 
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
+  const { data: secretMessage } = api.websites.getSecretMessage.useQuery(
     undefined, // no input
     { enabled: sessionData?.user !== undefined },
   );
